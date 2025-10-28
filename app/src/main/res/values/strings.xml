@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">losZETAS</string>
+    <string name="wallet_icon">Wallet Icon</string>
+    <string name="person_icon">Person Icon</string>
 </resources>

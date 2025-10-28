@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Título con icono -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_person"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/person_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Iniciar Sesión"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1a1a1a"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <!-- Campo Correo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Correo"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="6dp"
+            android:fontFamily="sans-serif" />
+
+        <EditText
+            android:id="@+id/edit_correo"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="nombre@correo.com"
+            android:textColorHint="#AAAAAA"
+            android:inputType="textEmailAddress"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/bg_edittext"
+            android:textSize="14sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Campo Contraseña -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contraseña"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="6dp"
+            android:fontFamily="sans-serif" />
+
+        <EditText
+            android:id="@+id/edit_pass"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="••••••••"
+            android:textColorHint="#AAAAAA"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/bg_edittext"
+            android:textSize="14sp"
+            android:layout_marginBottom="28dp" />
+
+        <!-- Botón Iniciar Sesión -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_login"
+            android:layout_width="140dp"
+            android:layout_height="44dp"
+            android:text="Iniciar Sesión"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_button_primary"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:fontFamily="sans-serif-medium" />
+
+    </LinearLayout>
+
+</ScrollView>
