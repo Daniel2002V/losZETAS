@@ -2,39 +2,33 @@ package com.daniel.loszetas
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.daniel.loszetas.databinding.ActivityLoginBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        // Inicializar ViewBinding
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = Firebase.auth
 
-        val editCorreo = findViewById<EditText>(R.id.edit_correo)
-        val editPass = findViewById<EditText>(R.id.edit_pass)
-        val buttonLogin = findViewById<Button>(R.id.btn_login)
-
-        buttonLogin.setOnClickListener {
-            val correo = editCorreo.text.toString().trim()
-            val pass = editPass.text.toString().trim()
+        binding.btnLogin.setOnClickListener {
+            val correo = binding.editCorreo.text.toString().trim()
+            val pass = binding.editPass.text.toString().trim()
 
             if (correo.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(
-                    this,
-                    "Debe ingresar correo y contraseña",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Debe ingresar correo y contraseña", Toast.LENGTH_SHORT).show()
             } else {
                 loginValidation(correo, pass)
             }
@@ -45,11 +39,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(correo, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(
-                        this,
-                        "Inicio de sesión exitoso",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     irAPantallaPrincipal()
                 } else {
                     Toast.makeText(
@@ -62,8 +52,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun irAPantallaPrincipal() {
-        val intent = Intent(this, PantallaPrincipalActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, PantallaPrincipalActivity::class.java))
         finish()
     }
 }
