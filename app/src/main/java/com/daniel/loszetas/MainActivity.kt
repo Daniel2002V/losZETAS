@@ -2,34 +2,33 @@ package com.daniel.loszetas
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.daniel.loszetas.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        // Inicializar ViewBinding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = Firebase.auth
 
-        val buttonRegistrarse = findViewById<Button>(R.id.btn_registrarse)
-        val buttonIniciarSesion = findViewById<Button>(R.id.btn_iniciar_sesion)
-
-        buttonRegistrarse.setOnClickListener {
-            val intent = Intent(this, RegistrarseActivity::class.java)
-            startActivity(intent)
+        // Usar binding en lugar de findViewById
+        binding.btnRegistrarse.setOnClickListener {
+            startActivity(Intent(this, RegistrarseActivity::class.java))
         }
 
-        buttonIniciarSesion.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        binding.btnIniciarSesion.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
@@ -43,8 +42,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun irAPantallaPrincipal() {
-        val intent = Intent(this, PantallaPrincipalActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, PantallaPrincipalActivity::class.java))
         finish()
     }
 }
