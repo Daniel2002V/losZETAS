@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="page_background">#FFFFFF</color>
+    <color name="card_background">#FAFAFA</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="chip_bg_light">#EAE4FF</color>
+    <color name="chip_text">#5B33FF</color>
+    <color name="chip_stroke">#D2C7FF</color>
 </resources>
