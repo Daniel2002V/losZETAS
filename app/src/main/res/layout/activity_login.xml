@@ -3,25 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/white">
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:padding="32dp">
 
-        <!-- Logo o Título de la App -->
+        <!-- Logo con animación -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_proahorro_logo"
+            android:contentDescription="Logo PROAHORRO"
+            android:layout_marginTop="60dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:alpha="0" />
+
         <TextView
             android:id="@+id/tvAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="PROAHORRO"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/purple_700"
-            android:layout_marginTop="48dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="36sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/text_primary"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/ivLogo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -29,22 +41,24 @@
             android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tu finanzas bajo control"
+            android:text="Administra tu dinero con inteligencia"
             android:textSize="16sp"
-            android:textColor="@color/black"
+            android:textColor="@color/text_secondary"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@id/tvAppName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Card contenedor del formulario -->
+        <!-- Card con Glassmorphism -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardLogin"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="12dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -53,73 +67,88 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="28dp">
 
-                <!-- Campo de Email -->
+                <!-- Email -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilEmail"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Correo electrónico"
-                    app:startIconDrawable="@android:drawable/ic_dialog_email"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:startIconDrawable="@drawable/ic_email"
+                    app:startIconTint="@color/text_primary"
+                    app:boxStrokeColor="@color/text_primary"
+                    app:hintTextColor="@color/text_primary"
+                    android:layout_marginTop="8dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:maxLines="1" />
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Campo de Contraseña -->
+                <!-- Password -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPassword"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:hint="Contraseña"
-                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="@color/text_primary"
+                    app:boxStrokeColor="@color/text_primary"
+                    app:hintTextColor="@color/text_primary"
                     app:endIconMode="password_toggle"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:endIconTint="@color/text_primary">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:maxLines="1" />
+                        android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Botón de Login -->
+                <!-- Botón Login -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="32dp"
                     android:text="Iniciar Sesión"
                     android:textSize="16sp"
-                    app:cornerRadius="12dp" />
+                    android:textColor="@color/text_primary"
+                    app:cornerRadius="16dp"
+                    style="@style/Widget.Material3.Button"
+                    android:backgroundTint="@color/fintech_primary" />
 
-                <!-- Botón de Registro -->
+                <!-- Botón Registro -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRegister"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="56dp"
                     android:layout_marginTop="12dp"
                     android:text="Crear Cuenta"
                     android:textSize="16sp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:cornerRadius="12dp" />
+                    app:cornerRadius="16dp"
+                    app:strokeColor="@color/text_primary"
+                    app:strokeWidth="2dp"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:textColor="@color/text_primary" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ProgressBar (oculto por defecto) -->
+        <!-- ProgressBar centrado -->
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

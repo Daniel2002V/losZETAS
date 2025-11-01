@@ -39,6 +39,18 @@ class LoginActivity : AppCompatActivity() {
 
         // Configurar listeners de los botones
         setupListeners()
+        // Animación de logo y título
+        binding.ivLogo.alpha = 0f
+        binding.tvAppName.alpha = 0f
+        binding.tvSubtitle.alpha = 0f
+        binding.cardLogin.alpha = 0f
+
+        binding.ivLogo.postDelayed({
+            binding.ivLogo.animate().alpha(1f).setDuration(800).start()
+            binding.tvAppName.animate().alpha(1f).setDuration(800).setStartDelay(200).start()
+            binding.tvSubtitle.animate().alpha(1f).setDuration(800).setStartDelay(400).start()
+            binding.cardLogin.animate().alpha(1f).translationY(50f).setDuration(800).setStartDelay(600).start()
+        }, 300)
     }
 
     /**

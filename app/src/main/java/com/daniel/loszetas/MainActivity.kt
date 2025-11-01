@@ -1,16 +1,9 @@
 package com.daniel.loszetas
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
 import com.daniel.loszetas.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import android.content.Intent
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,15 +11,38 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setupToolbar()
+        setupButtons()
+        setupMockData()
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    private fun setupButtons() {
+        binding.btnIngreso.setOnClickListener {
+            // TODO: Ir a Agregar Ingreso
         }
+
+        binding.btnGasto.setOnClickListener {
+            // TODO: Ir a Agregar Gasto
+        }
+
+        binding.btnVerHistorial.setOnClickListener {
+            // TODO: Ir a Historial
+        }
+    }
+
+    private fun setupMockData() {
+        binding.tvSaldoActual.text = "$1.254.320"
+        binding.tvIngresos.text = "$1.550.000"
+        binding.tvGastos.text = "$780.200"
+        binding.tvNeto.text = "$769.800"
+        binding.tvProgresoMeta.text = "Presup.: 75%"
     }
 }
