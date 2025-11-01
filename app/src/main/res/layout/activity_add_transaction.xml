@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -11,7 +12,6 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <!-- Header -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
@@ -24,7 +24,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Toggle Gasto/Ingreso -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardToggle"
             android:layout_width="0dp"
@@ -68,7 +67,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card principal -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardForm"
             android:layout_width="0dp"
@@ -87,7 +85,6 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Monto -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilAmount"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -107,7 +104,6 @@
                         android:textSize="24sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Categoría -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilCategory"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -128,7 +124,6 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Fecha -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilDate"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -149,7 +144,6 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Descripción -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilDescription"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -172,7 +166,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Botones -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="0dp"

@@ -1,3 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">losZETAS</string>
+    <string name="app_name">PROAHORRO</string>
+
+    <!-- Login -->
+    <string name="logo_description">Logo PROAHORRO</string>
+    <string name="app_subtitle">Administra tu dinero con inteligencia</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Iniciar Sesión</string>
+    <string name="register_button">Crear Cuenta</string>
+
+    <!-- Add Transaction -->
+    <string name="new_transaction">Nueva Transacción</string>
+    <string name="expense">Gasto</string>
+    <string name="income">Ingreso</string>
+    <string name="amount">Monto</string>
+    <string name="category">Categoría</string>
+    <string name="date">Fecha</string>
+    <string name="description">Descripción (opcional)</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Home -->
+    <string name="current_balance">Saldo actual</string>
+    <string name="incomes">Ingresos</string>
+    <string name="expenses">Gastos</string>
+    <string name="net">Neto</string>
+    <string name="summary">Resumen</string>
+    <string name="recent_movements">Movimientos recientes</string>
+    <string name="view_history">Ver historial</string>
+    <string name="current_month">Mes actual</string>
+    <string name="comparative">Comparativo</string>
 </resources>
