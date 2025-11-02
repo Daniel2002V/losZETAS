@@ -3,5 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     id("com.google.gms.google-services") version "4.4.4" apply false
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.devtools.ksp") version "2.0.21-1.0.28" apply false  // ← CAMBIA DE 1.0.24 A 1.0.28
+
+    //id("com.google.devtools.ksp") version "1.9.20-1.0.14"causaba problemas
 }

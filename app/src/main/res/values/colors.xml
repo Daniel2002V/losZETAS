@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="page_background">#FFFFFF</color>
-    <color name="card_background">#FAFAFA</color>
-    <color name="text_primary">#1A1A1A</color>
-    <color name="chip_bg_light">#EAE4FF</color>
-    <color name="chip_text">#5B33FF</color>
-    <color name="chip_stroke">#D2C7FF</color>
+    <!-- FINTECH SOBRIO 2025 -->
+    <color name="fintech_primary">#0D47A1</color>     <!-- Azul oscuro -->
+    <color name="fintech_primary_variant">#1565C0</color>
+    <color name="fintech_secondary">#00C853</color>   <!-- Verde éxito -->
+    <color name="fintech_error">#D32F2F</color>       <!-- Rojo oscuro -->
+
+    <!-- Fondo principal -->
+    <color name="background_dark">#121212</color>     <!-- Gris muy oscuro -->
+    <color name="surface_dark">#1E1E1E</color>        <!-- Card oscuro -->
+
+    <!-- Texto -->
+    <color name="text_primary">#FFFFFF</color>        <!-- Blanco puro -->
+    <color name="text_secondary">#B0BEC5</color>      <!-- Gris claro -->
+
+    <!-- Card con contraste -->
+    <color name="card_background">#1E1E1E</color>     <!-- Negro suave -->
+
+    <!-- Botones -->
+    <color name="button_primary">#1565C0</color>      <!-- Azul sólido -->
+    <color name="button_negative">#D32F2F</color>     <!-- Rojo sólido -->
+
+    <!-- Compatibilidad -->
+    <color name="surface_elevated">#2D2D2D</color>
+
+    <!-- Gradientes para fondos -->
+    <color name="gradient_start">#0B3D91</color>   <!-- Azul profundo -->
+    <color name="gradient_end">#009624</color>     <!-- Verde elegante -->
+
+    <!-- Faltantes referenciados -->
+    <color name="primary_dark">#0A2E75</color>       <!-- Azul más oscuro -->
+    <color name="primary_medium">#1976D2</color>     <!-- Azul medio -->
+    <color name="white">#FFFFFF</color>
+    <color name="accent_yellow">#FFD600</color>      <!-- Amarillo brillante -->
+    <color name="expense_color">#E53935</color>      <!-- Rojo para gastos -->
+    <color name="income_color">#43A047</color>       <!-- Verde para ingresos -->
 </resources>

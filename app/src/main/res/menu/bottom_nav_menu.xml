@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_home" android:title="Inicio" android:icon="@drawable/ic_home" />
+    <item android:id="@+id/nav_history" android:title="Historial" android:icon="@drawable/ic_history" />
+    <item android:id="@+id/nav_stats" android:title="Estadísticas" android:icon="@drawable/ic_stats" />
+    <item android:id="@+id/nav_goals" android:title="Presup./Metas" android:icon="@drawable/ic_goals" />
+    <item android:id="@+id/nav_settings" android:title="Ajustes" android:icon="@drawable/ic_settings" />
+</menu>

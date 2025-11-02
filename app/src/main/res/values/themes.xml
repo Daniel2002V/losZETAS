@@ -1,9 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LosZETAS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- Tema base - IMPORTANTE: hereda de Theme.Material3 -->
+    <style name="Base.Theme.LosZetasBeta" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_medium</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent_yellow</item>
+        <item name="colorOnSecondary">@color/primary_dark</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.LosZETAS" parent="Base.Theme.LosZETAS" />
+    <!-- Tema principal de la app -->
+    <style name="Theme.LosZetasBeta" parent="Base.Theme.LosZetasBeta" />
+
+    <!-- 👇 NUEVO: ESTILO PARA TABS (texto bold 11sp) -->
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
