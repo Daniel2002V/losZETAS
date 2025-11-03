@@ -2,13 +2,16 @@ package com.daniel.loszetas
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.daniel.loszetas.data.database.AppDatabase
 import com.daniel.loszetas.data.entities.Transaccion
 import com.daniel.loszetas.databinding.DialogAgregarTransaccionBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,70 +22,77 @@ class AgregarTransaccionDialog(
 
     private val dialog = BottomSheetDialog(context)
     private lateinit var binding: DialogAgregarTransaccionBinding
+    private val database by lazy { AppDatabase.getDatabase(context) }
 
     private var esGasto = false
     private var fechaSeleccionada = Calendar.getInstance()
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-    // Opciones para spinners
-    private val categoriasGasto = arrayOf("Hogar", "Transporte", "Comida", "Entretenimiento", "Salud", "Otros")
-    private val categoriasIngreso = arrayOf("Sueldo", "Freelance", "Inversiones", "Reembolso", "Otros")
     private val metodosPago = arrayOf("Tarjeta", "Efectivo", "Transferencia", "Otro")
     private val cuentasDestino = arrayOf("Cuenta principal", "Cuenta de ahorros", "Efectivo")
 
     fun mostrar(esGasto: Boolean = false) {
         this.esGasto = esGasto
 
-        binding = DialogAgregarTransaccionBinding.inflate(LayoutInflater.from(context))
+        binding = DialogAgregarTransaccionBinding.inflate(android.view.LayoutInflater.from(context))
         dialog.setContentView(binding.root)
 
         inicializarVistas()
         configurarSpinners()
         configurarListeners()
         actualizarUI()
+        cargarCategorias()
 
         dialog.show()
     }
 
     private fun inicializarVistas() {
-        // Mostrar fecha actual
         binding.btnFecha.text = dateFormat.format(fechaSeleccionada.time)
     }
 
     private fun configurarSpinners() {
-        // Categorías
-        val categorias = if (esGasto) categoriasGasto else categoriasIngreso
-        val adapterCategorias = ArrayAdapter(context, android.R.layout.simple_spinner_item, categorias)
-        adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerCategoria.adapter = adapterCategorias
-
-        // Métodos de pago
         val adapterMetodos = ArrayAdapter(context, android.R.layout.simple_spinner_item, metodosPago)
         adapterMetodos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerMetodoPago.adapter = adapterMetodos
 
-        // Cuentas destino
         val adapterCuentas = ArrayAdapter(context, android.R.layout.simple_spinner_item, cuentasDestino)
         adapterCuentas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCuentaDestino.adapter = adapterCuentas
     }
 
+    private fun cargarCategorias() {
+        if (context !is LifecycleOwner) return
+
+        context.lifecycleScope.launch {
+            val flow = if (esGasto) {
+                database.categoriaDao().obtenerCategoriasGasto()
+            } else {
+                database.categoriaDao().obtenerCategoriasIngreso()
+            }
+
+            flow.collect { categorias ->
+                val nombresCategorias = categorias.map { it.nombre }.toTypedArray()
+                val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, nombresCategorias)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.spinnerCategoria.adapter = adapter
+            }
+        }
+    }
+
     private fun configurarListeners() {
         with(binding) {
-            // Tabs
             btnTabGasto.setOnClickListener {
                 esGasto = true
                 actualizarUI()
-                configurarSpinners()
+                cargarCategorias()
             }
 
             btnTabIngreso.setOnClickListener {
                 esGasto = false
                 actualizarUI()
-                configurarSpinners()
+                cargarCategorias()
             }
 
-            // Selector de fecha
             btnFecha.setOnClickListener {
                 val datePicker = DatePickerDialog(
                     context,
@@ -97,7 +107,6 @@ class AgregarTransaccionDialog(
                 datePicker.show()
             }
 
-            // Botones
             btnCancelar.setOnClickListener {
                 dialog.dismiss()
             }
@@ -110,10 +119,8 @@ class AgregarTransaccionDialog(
 
     private fun actualizarUI() {
         with(binding) {
-            // Título
             tvTitulo.text = if (esGasto) "Agregar gasto" else "Agregar ingreso"
 
-            // Tabs
             if (esGasto) {
                 btnTabGasto.setBackgroundColor(context.getColor(android.R.color.holo_red_light))
                 btnTabIngreso.setBackgroundColor(context.getColor(android.R.color.darker_gray))
@@ -122,7 +129,6 @@ class AgregarTransaccionDialog(
                 btnTabIngreso.setBackgroundColor(context.getColor(android.R.color.holo_blue_light))
             }
 
-            // Campos específicos
             if (esGasto) {
                 tvMetodoPago.visibility = View.VISIBLE
                 spinnerMetodoPago.visibility = View.VISIBLE
@@ -135,14 +141,12 @@ class AgregarTransaccionDialog(
                 spinnerCuentaDestino.visibility = View.VISIBLE
             }
 
-            // Botón guardar
             btnGuardar.text = if (esGasto) "Guardar gasto" else "Guardar ingreso"
         }
     }
 
     private fun guardarTransaccion() {
         with(binding) {
-            // Validar monto
             val montoStr = etMonto.text.toString()
             if (montoStr.isEmpty()) {
                 Toast.makeText(context, "Ingresa un monto", Toast.LENGTH_SHORT).show()
@@ -155,13 +159,11 @@ class AgregarTransaccionDialog(
                 return
             }
 
-            // Obtener valores
-            val categoria = spinnerCategoria.selectedItem.toString()
+            val categoria = spinnerCategoria.selectedItem?.toString() ?: "Otros"
             val descripcion = etDescripcion.text.toString().ifEmpty { "Sin descripción" }
             val metodoPago = if (esGasto) spinnerMetodoPago.selectedItem.toString() else null
             val cuentaDestino = if (!esGasto) spinnerCuentaDestino.selectedItem.toString() else null
 
-            // Crear transacción
             val transaccion = Transaccion(
                 esGasto = esGasto,
                 monto = monto,

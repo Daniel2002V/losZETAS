@@ -93,15 +93,24 @@ class HistorialActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        val categoriasSugeridasGastos = listOf("Supermercado", "Transporte", "Restaurantes")
-        val categoriasGastos = listOf(
-            "Alimentación", "Transporte", "Hogar", "Servicios", "Salud",
-            "Entretenimiento", "Educación", "Ropa", "Supermercado",
-            "Restaurantes", "Regalos", "Otros"
-        )
-        val categoriasIngresos = listOf("Sueldo", "Freelance", "Bonos", "Inversiones", "Ventas", "Otros ingresos")
-
         var categoriaSeleccionada: String? = filtroCategoria
+        var categoriasDisponibles: List<String> = emptyList()
+
+        fun obtenerCategoriasFrecuentes(esGasto: Boolean?): List<String> {
+            val transaccionesFiltradas = when (esGasto) {
+                true -> todasTransacciones.filter { it.esGasto }
+                false -> todasTransacciones.filter { !it.esGasto }
+                null -> todasTransacciones
+            }
+
+            return transaccionesFiltradas
+                .groupBy { it.categoria }
+                .mapValues { it.value.size }
+                .entries
+                .sortedByDescending { it.value }
+                .take(3)
+                .map { it.key }
+        }
 
         fun cargarCategorias(categorias: List<String>, contenedor: ViewGroup) {
             contenedor.removeAllViews()
@@ -112,12 +121,13 @@ class HistorialActivity : AppCompatActivity() {
 
                 if (categoria == categoriaSeleccionada) {
                     itemBinding.layoutCategoria.setBackgroundColor(0xFFDDD6FE.toInt())
+                } else {
+                    itemBinding.layoutCategoria.setBackgroundColor(0xFFF3F4F6.toInt())
                 }
 
                 itemBinding.root.setOnClickListener {
                     categoriaSeleccionada = categoria
-                    cargarCategorias(categoriasSugeridasGastos, dialogBinding.listaSugeridas)
-                    cargarCategorias(categoriasGastos + categoriasIngresos, dialogBinding.listaTodasCategorias)
+                    cargarCategorias(categorias, contenedor)
                 }
 
                 contenedor.addView(itemBinding.root)
@@ -125,18 +135,31 @@ class HistorialActivity : AppCompatActivity() {
         }
 
         fun actualizarCategoriasPorTipo(tipo: String) {
-            when (tipo) {
-                "gastos" -> {
-                    cargarCategorias(categoriasSugeridasGastos, dialogBinding.listaSugeridas)
-                    cargarCategorias(categoriasGastos, dialogBinding.listaTodasCategorias)
+            lifecycleScope.launch {
+                val flow = when (tipo) {
+                    "gastos" -> database.categoriaDao().obtenerCategoriasGasto()
+                    "ingresos" -> database.categoriaDao().obtenerCategoriasIngreso()
+                    else -> database.categoriaDao().obtenerTodasCategorias()
                 }
-                "ingresos" -> {
-                    dialogBinding.listaSugeridas.removeAllViews()
-                    cargarCategorias(categoriasIngresos, dialogBinding.listaTodasCategorias)
-                }
-                else -> {
-                    cargarCategorias(categoriasSugeridasGastos, dialogBinding.listaSugeridas)
-                    cargarCategorias((categoriasGastos + categoriasIngresos).distinct().sorted(), dialogBinding.listaTodasCategorias)
+
+                flow.collect { categorias ->
+                    categoriasDisponibles = categorias.map { it.nombre }
+
+                    val frecuentes = obtenerCategoriasFrecuentes(
+                        when (tipo) {
+                            "gastos" -> true
+                            "ingresos" -> false
+                            else -> null
+                        }
+                    )
+
+                    if (frecuentes.isNotEmpty()) {
+                        cargarCategorias(frecuentes, dialogBinding.listaSugeridas)
+                    } else {
+                        dialogBinding.listaSugeridas.removeAllViews()
+                    }
+
+                    cargarCategorias(categoriasDisponibles, dialogBinding.listaTodasCategorias)
                 }
             }
         }
@@ -163,6 +186,20 @@ class HistorialActivity : AppCompatActivity() {
                 chipIngresos.setBackgroundResource(R.drawable.bg_button_primary)
                 chipIngresos.setTextColor(getColor(android.R.color.white))
                 actualizarCategoriasPorTipo("ingresos")
+            }
+
+            chipFrecuentes.setOnClickListener {
+                resetearChips(dialogBinding)
+                chipFrecuentes.setBackgroundResource(R.drawable.bg_button_primary)
+                chipFrecuentes.setTextColor(getColor(android.R.color.white))
+
+                val frecuentes = obtenerCategoriasFrecuentes(null)
+                listaSugeridas.removeAllViews()
+                if (frecuentes.isNotEmpty()) {
+                    cargarCategorias(frecuentes, listaTodasCategorias)
+                } else {
+                    Toast.makeText(this@HistorialActivity, "No hay transacciones aún", Toast.LENGTH_SHORT).show()
+                }
             }
 
             etBuscarCategoria.addTextChangedListener(object : TextWatcher {

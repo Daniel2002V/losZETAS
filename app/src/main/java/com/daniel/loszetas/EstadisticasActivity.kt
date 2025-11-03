@@ -1,6 +1,7 @@
 package com.daniel.loszetas
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import com.daniel.loszetas.data.database.AppDatabase
 import com.daniel.loszetas.databinding.ActivityEstadisticasBinding
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class EstadisticasActivity : AppCompatActivity() {
@@ -18,6 +20,7 @@ class EstadisticasActivity : AppCompatActivity() {
     private lateinit var transaccionAdapter: TransaccionAdapter
     private val database by lazy { AppDatabase.getDatabase(this) }
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     private var periodoSeleccionado = "MES"
 
@@ -59,9 +62,9 @@ class EstadisticasActivity : AppCompatActivity() {
         periodoSeleccionado = periodo
 
         with(binding) {
-            btnMes.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            btnTrimestre.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            btnAno.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            btnMes.setBackgroundColor(Color.TRANSPARENT)
+            btnTrimestre.setBackgroundColor(Color.TRANSPARENT)
+            btnAno.setBackgroundColor(Color.TRANSPARENT)
 
             when (periodo) {
                 "MES" -> btnMes.setBackgroundResource(R.drawable.bg_button_primary)
@@ -88,7 +91,7 @@ class EstadisticasActivity : AppCompatActivity() {
                 }
                 R.id.nav_estadisticas -> true
                 R.id.nav_presupuesto -> {
-                    Toast.makeText(this, "Presupuestos/Metas próximamente", Toast.LENGTH_SHORT).show()
+                    navegarA(PresupuestosMetasActivity::class.java)
                     true
                 }
                 R.id.nav_ajustes -> {
@@ -114,6 +117,7 @@ class EstadisticasActivity : AppCompatActivity() {
 
                     transaccionAdapter.actualizarTransacciones(transaccionesFiltradas)
                     calcularEstadisticas(transaccionesFiltradas)
+                    calcularEstadisticasAvanzadas(transaccionesFiltradas)
                 }
             } catch (e: Exception) {
                 Toast.makeText(
@@ -160,6 +164,67 @@ class EstadisticasActivity : AppCompatActivity() {
             tvIngresosEstadisticas.text = currencyFormat.format(totalIngresos)
             tvGastosEstadisticas.text = currencyFormat.format(totalGastos)
             tvNetoEstadisticas.text = currencyFormat.format(neto)
+        }
+    }
+
+    private fun calcularEstadisticasAvanzadas(transacciones: List<com.daniel.loszetas.data.entities.Transaccion>) {
+        val gastos = transacciones.filter { it.esGasto }
+
+        // Promedio diario de gastos
+        val dias = when (periodoSeleccionado) {
+            "MES" -> 30
+            "TRIMESTRE" -> 90
+            "AÑO" -> 365
+            else -> 30
+        }
+        val promedioDiario = if (gastos.isNotEmpty()) {
+            gastos.sumOf { it.monto } / dias
+        } else 0.0
+
+        binding.tvPromedioDiario.text = "${currencyFormat.format(promedioDiario)}/día"
+
+        // Categoría con más gastos
+        val gastosPorCategoria = gastos.groupBy { it.categoria }
+            .mapValues { entry -> entry.value.sumOf { it.monto } }
+            .toList()
+            .sortedByDescending { it.second }
+
+        if (gastosPorCategoria.isNotEmpty()) {
+            val topCategoria = gastosPorCategoria.first()
+            binding.tvTopCategoria.text = topCategoria.first
+            binding.tvTopCategoriaMonto.text = currencyFormat.format(topCategoria.second)
+        } else {
+            binding.tvTopCategoria.text = "N/A"
+            binding.tvTopCategoriaMonto.text = "$0"
+        }
+
+        // Distribución por categorías (Top 3)
+        mostrarDistribucionCategorias(gastosPorCategoria.take(3))
+    }
+
+    private fun mostrarDistribucionCategorias(topCategorias: List<Pair<String, Double>>) {
+        if (topCategorias.isEmpty()) {
+            binding.tvCategoria1.text = "Sin datos"
+            binding.tvCategoria2.text = ""
+            binding.tvCategoria3.text = ""
+            return
+        }
+
+        val total = topCategorias.sumOf { it.second }
+
+        topCategorias.getOrNull(0)?.let {
+            val porcentaje = if (total > 0) (it.second / total * 100).toInt() else 0
+            binding.tvCategoria1.text = "${it.first}: $porcentaje%"
+        }
+
+        topCategorias.getOrNull(1)?.let {
+            val porcentaje = if (total > 0) (it.second / total * 100).toInt() else 0
+            binding.tvCategoria2.text = "${it.first}: $porcentaje%"
+        }
+
+        topCategorias.getOrNull(2)?.let {
+            val porcentaje = if (total > 0) (it.second / total * 100).toInt() else 0
+            binding.tvCategoria3.text = "${it.first}: $porcentaje%"
         }
     }
 }

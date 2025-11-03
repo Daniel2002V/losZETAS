@@ -17,8 +17,7 @@
         tools:targetApi="31">
         <activity
             android:name=".PantallaPrincipalActivity"
-            android:exported="false" />
-        <!-- Pantalla de Bienvenida (MainActivity) - PANTALLA INICIAL -->
+            android:exported="false" /> <!-- Pantalla de Bienvenida (MainActivity) - PANTALLA INICIAL -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -37,10 +36,20 @@
         <activity
             android:name=".HistorialActivity"
             android:exported="false" />
-
         <activity
             android:name=".EstadisticasActivity"
             android:exported="false" />
+        <activity
+            android:name=".PresupuestosMetasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NuevaMetaActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Translucent" />
+        <activity
+            android:name=".NuevoPresupuestoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Translucent" />
     </application>
 
 </manifest>
