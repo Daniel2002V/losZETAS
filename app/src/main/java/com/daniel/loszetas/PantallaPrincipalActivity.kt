@@ -1,5 +1,6 @@
 package com.daniel.loszetas
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,32 +21,23 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPantallaPrincipalBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var transaccionAdapter: TransaccionAdapter
-
-    // Usar el singleton de AppDatabase
     private val database by lazy { AppDatabase.getDatabase(this) }
-
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializar ViewBinding
         binding = ActivityPantallaPrincipalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicializar Firebase
         auth = Firebase.auth
 
-        // Mostrar mensaje de bienvenida
         val usuario = auth.currentUser
-        Toast.makeText(
-            this,
-            "Bienvenido ${usuario?.email}",
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(this, "Bienvenido ${usuario?.email}", Toast.LENGTH_SHORT).show()
 
         configurarRecyclerView()
         configurarBotones()
+        configurarNavegacion()
         cargarDatos()
     }
 
@@ -59,30 +51,59 @@ class PantallaPrincipalActivity : AppCompatActivity() {
 
     private fun configurarBotones() {
         with(binding) {
-            // Botón CLP
             btnCLP.setOnClickListener {
-                Toast.makeText(
-                    this@PantallaPrincipalActivity,
-                    "Moneda: CLP",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@PantallaPrincipalActivity, "Moneda: CLP", Toast.LENGTH_SHORT).show()
             }
 
-            // Botón Ingreso
+            btnAgregar.setOnClickListener {
+                mostrarDialogoAgregar()
+            }
+
             btnIngreso.setOnClickListener {
                 mostrarDialogoAgregar(esGasto = false)
             }
 
-            // Botón Gasto
             btnGasto.setOnClickListener {
                 mostrarDialogoAgregar(esGasto = true)
             }
 
-            // FAB Agregar
-            fabAgregar.setOnClickListener {
-                mostrarDialogoAgregar()
+            tvVerHistorial.setOnClickListener {
+                navegarA(HistorialActivity::class.java)
             }
         }
+    }
+
+    private fun configurarNavegacion() {
+        binding.bottomNavigation.selectedItemId = R.id.nav_inicio
+
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_inicio -> true
+                R.id.nav_historial -> {
+                    navegarA(HistorialActivity::class.java)
+                    true
+                }
+                R.id.nav_estadisticas -> {
+                    navegarA(EstadisticasActivity::class.java)
+                    true
+                }
+                R.id.nav_presupuesto -> {
+                    Toast.makeText(this, "Presupuestos/Metas próximamente", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_ajustes -> {
+                    Toast.makeText(this, "Ajustes próximamente", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun navegarA(destino: Class<*>) {
+        startActivity(Intent(this, destino))
+        overridePendingTransition(0, 0)
+        finish()
     }
 
     private fun mostrarDialogoAgregar(esGasto: Boolean = false) {
@@ -101,7 +122,6 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     "Transacción guardada",
                     Toast.LENGTH_SHORT
                 ).show()
-                // No necesitamos llamar cargarDatos() porque Flow actualiza automáticamente
             } catch (e: Exception) {
                 Toast.makeText(
                     this@PantallaPrincipalActivity,
@@ -115,11 +135,10 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     private fun cargarDatos() {
         lifecycleScope.launch {
             try {
-                // Usar Flow para observar cambios automáticamente
                 database.transaccionDao().obtenerTodas().collect { transacciones ->
-                    transaccionAdapter.actualizarTransacciones(transacciones)
+                    val transaccionesRecientes = transacciones.takeLast(5)
+                    transaccionAdapter.actualizarTransacciones(transaccionesRecientes)
 
-                    // Calcular totales
                     val totalIngresos = transacciones
                         .filter { !it.esGasto }
                         .sumOf { it.monto }
@@ -131,7 +150,6 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     val saldoActual = totalIngresos - totalGastos
                     val neto = totalIngresos - totalGastos
 
-                    // Actualizar UI con ViewBinding
                     with(binding) {
                         tvSaldoActual.text = currencyFormat.format(saldoActual)
                         tvIngresos.text = currencyFormat.format(totalIngresos)

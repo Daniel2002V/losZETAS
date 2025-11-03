@@ -34,6 +34,13 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <activity
+            android:name=".HistorialActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".EstadisticasActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

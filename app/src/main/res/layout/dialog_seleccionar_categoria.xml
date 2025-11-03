@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Seleccionar categoría"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnCerrarDialogo"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_button_outline"
+            android:minHeight="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="Cerrar"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Buscador -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#F3F4F6"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp">
+
+        <EditText
+            android:id="@+id/etBuscarCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:hint="Buscar categorías"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#9CA3AF"
+            android:textSize="14sp" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Filtros rápidos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/chipTodas"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_primary"
+            android:minHeight="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Todas"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/chipGastos"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:minHeight="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Gastos"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/chipIngresos"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_outline"
+            android:minHeight="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Ingresos"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/chipFrecuentes"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/bg_button_outline"
+            android:minHeight="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Frecuentes"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- ScrollView para las categorías -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Sugeridas -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sugeridas"
+                android:textColor="#9CA3AF"
+                android:textSize="12sp" />
+
+            <!-- Lista de sugeridas -->
+            <LinearLayout
+                android:id="@+id/listaSugeridas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <!-- Se llenarán dinámicamente -->
+            </LinearLayout>
+
+            <!-- Todas las categorías -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Todas las categorías"
+                android:textColor="#9CA3AF"
+                android:textSize="12sp" />
+
+            <!-- Lista de todas -->
+            <LinearLayout
+                android:id="@+id/listaTodasCategorias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <!-- Se llenarán dinámicamente -->
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnLimpiarCategoria"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_outline"
+            android:text="Limpiar"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btnAplicarCategoria"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_primary"
+            android:text="Aplicar"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

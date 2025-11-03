@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_inicio"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Inicio" />
+
+    <item
+        android:id="@+id/nav_historial"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Historial" />
+
+    <item
+        android:id="@+id/nav_estadisticas"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Estadísticas" />
+
+    <item
+        android:id="@+id/nav_presupuesto"
+        android:icon="@android:drawable/ic_menu_set_as"
+        android:title="Presup./Metas" />
+
+    <item
+        android:id="@+id/nav_ajustes"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Ajustes" />
+</menu>
