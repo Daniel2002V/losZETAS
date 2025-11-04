@@ -60,5 +60,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-auth")//actualicen sus librerias, las de chat son antiguas
+    implementation("com.google.firebase:firebase-auth")
 }
