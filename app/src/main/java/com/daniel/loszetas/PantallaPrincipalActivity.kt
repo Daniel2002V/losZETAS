@@ -127,10 +127,9 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     "Transacción guardada",
                     Toast.LENGTH_SHORT
                 ).show()
-                // Recargar datos después de guardar
                 cargarDatos()
             } catch (e: CancellationException) {
-                // No hacer nada, es normal cuando se cancela
+                throw e
             } catch (e: Exception) {
                 Toast.makeText(
                     this@PantallaPrincipalActivity,

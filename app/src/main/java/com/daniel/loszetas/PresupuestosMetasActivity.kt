@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daniel.loszetas.data.database.AppDatabase
 import com.daniel.loszetas.databinding.ActivityPresupuestosMetasBinding
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class PresupuestosMetasActivity : AppCompatActivity() {
 
@@ -88,16 +89,36 @@ class PresupuestosMetasActivity : AppCompatActivity() {
 
     private fun cargarDatos() {
         lifecycleScope.launch {
-            // Cargar presupuestos
-            database.presupuestoDao().obtenerTodos().collect { presupuestos ->
-                presupuestoAdapter.actualizarPresupuestos(presupuestos)
+            try {
+                // Cargar presupuestos
+                database.presupuestoDao().obtenerTodos().collect { presupuestos ->
+                    presupuestoAdapter.actualizarPresupuestos(presupuestos)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@PresupuestosMetasActivity,
+                    "Error al cargar presupuestos: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         lifecycleScope.launch {
-            // Cargar metas
-            database.metaDao().obtenerActivas().collect { metas ->
-                metaAdapter.actualizarMetas(metas)
+            try {
+                // Cargar metas
+                database.metaDao().obtenerActivas().collect { metas ->
+                    metaAdapter.actualizarMetas(metas)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@PresupuestosMetasActivity,
+                    "Error al cargar metas: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

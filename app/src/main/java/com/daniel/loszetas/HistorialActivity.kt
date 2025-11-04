@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.cancellation.CancellationException
 
 class HistorialActivity : AppCompatActivity() {
 
@@ -386,6 +387,8 @@ class HistorialActivity : AppCompatActivity() {
                     todasTransacciones = transacciones
                     aplicarFiltros()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Toast.makeText(
                     this@HistorialActivity,
