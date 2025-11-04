@@ -72,7 +72,7 @@ class PresupuestosMetasActivity : AppCompatActivity() {
                 }
                 R.id.nav_presupuesto -> true
                 R.id.nav_ajustes -> {
-                    Toast.makeText(this, "Ajustes próximamente", Toast.LENGTH_SHORT).show()
+                    navegarA(AjustesActivity::class.java)
                     true
                 }
                 else -> false

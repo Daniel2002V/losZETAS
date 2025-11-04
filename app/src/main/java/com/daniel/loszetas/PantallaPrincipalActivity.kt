@@ -88,11 +88,11 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_presupuesto -> {
-                    Toast.makeText(this, "Presupuestos/Metas próximamente", Toast.LENGTH_SHORT).show()
+                    navegarA(PresupuestosMetasActivity::class.java)
                     true
                 }
                 R.id.nav_ajustes -> {
-                    Toast.makeText(this, "Ajustes próximamente", Toast.LENGTH_SHORT).show()
+                    navegarA(AjustesActivity::class.java)
                     true
                 }
                 else -> false
