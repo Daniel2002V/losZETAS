@@ -2,13 +2,14 @@ package com.daniel.loszetas
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.widget.ArrayAdapter
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.daniel.loszetas.data.database.AppDatabase
 import com.daniel.loszetas.data.entities.Presupuesto
 import com.daniel.loszetas.databinding.ActivityNuevoPresupuestoBinding
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,7 +21,8 @@ class NuevoPresupuestoActivity : AppCompatActivity() {
     private val dateFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
     private var fechaInicioMillis: Long = System.currentTimeMillis()
 
-    private val categorias = listOf("Alimentación", "Transporte", "Entretenimiento", "Servicios")
+    private var periodoSeleccionado = "MENSUAL"
+    private val categoriasSeleccionadas = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,100 +30,219 @@ class NuevoPresupuestoActivity : AppCompatActivity() {
         binding = ActivityNuevoPresupuestoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        configurarSpinners()
+        inicializarVistas()
+        cargarCategoriasDesdeDB()
         configurarBotones()
-        actualizarMontoInicial()
     }
 
-    private fun configurarSpinners() {
-        // Configurar categorías
-        val categoriaChips = listOf(
-            binding.chipAlimentacion,
-            binding.chipTransporte,
-            binding.chipEntretenimiento,
-            binding.chipServicios
-        )
+    private fun inicializarVistas() {
+        // Inicializar campos vacíos
+        binding.etLimiteTotal.setText("")
+        binding.etCuentaSeguimiento.setText("")
 
-        var categoriaSeleccionada = ""
+        // Configurar fecha inicial
+        binding.tvMesInicio.text = dateFormat.format(Date(fechaInicioMillis))
 
-        categoriaChips.forEachIndexed { index, chip ->
-            chip.setOnClickListener {
-                categoriaChips.forEach { it.isChecked = false }
-                chip.isChecked = true
-                categoriaSeleccionada = categorias[index]
-                calcularDistribucion()
-            }
+        // Configurar selector de fecha
+        binding.tvMesInicio.setOnClickListener {
+            mostrarSelectorFecha()
         }
 
-        // Periodo
-        val periodos = listOf("Mensual", "Semanal", "Anual")
-        val periodoAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, periodos)
-        periodoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Inicializar barra de progreso en 0
+        binding.tvDistribucion.text = "$0.00 / $0.00"
+        binding.tvRestante.text = "Restante $0.00"
+    }
+
+    private fun mostrarSelectorFecha() {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = fechaInicioMillis
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, _ ->
+                calendar.set(year, month, 1)
+                fechaInicioMillis = calendar.timeInMillis
+                binding.tvMesInicio.text = dateFormat.format(Date(fechaInicioMillis))
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+
+    private fun cargarCategoriasDesdeDB() {
+        lifecycleScope.launch {
+            database.categoriaDao().obtenerCategoriasGasto().collect { categorias ->
+                binding.chipGroupCategorias.removeAllViews()
+
+                categorias.forEach { categoria ->
+                    val chip = Chip(this@NuevoPresupuestoActivity).apply {
+                        text = categoria.nombre
+                        isCheckable = true
+                        setChipBackgroundColorResource(android.R.color.white)
+                        setTextColor(getColor(R.color.purple_500))
+                        chipStrokeWidth = 2f
+                        chipStrokeColor = getColorStateList(R.color.purple_500)
+
+                        setOnCheckedChangeListener { _, isChecked ->
+                            if (isChecked) {
+                                categoriasSeleccionadas.add(categoria.nombre)
+                                setChipBackgroundColorResource(R.color.purple_100)
+                            } else {
+                                categoriasSeleccionadas.remove(categoria.nombre)
+                                setChipBackgroundColorResource(android.R.color.white)
+                            }
+                            actualizarDistribucion()
+                        }
+                    }
+                    binding.chipGroupCategorias.addView(chip)
+                }
+            }
+        }
     }
 
     private fun configurarBotones() {
+        // Botón cerrar
         binding.btnCerrar.setOnClickListener {
             finish()
         }
 
-        binding.tvMesInicio.text = dateFormat.format(Date(fechaInicioMillis))
+        // Botones de período
+        binding.btnMensualPeriodo.setOnClickListener {
+            seleccionarPeriodo("MENSUAL")
+        }
 
+        binding.btnSemanal.setOnClickListener {
+            seleccionarPeriodo("SEMANAL")
+        }
+
+        binding.btnAnual.setOnClickListener {
+            seleccionarPeriodo("ANUAL")
+        }
+
+        // Botón atrás
+        binding.btnAtras.setOnClickListener {
+            finish()
+        }
+
+        // Botón crear presupuesto
         binding.btnCrearPresupuesto.setOnClickListener {
             guardarPresupuesto()
         }
 
-        binding.btnAtras.setOnClickListener {
-            finish()
+        // Listener para actualizar distribución cuando cambie el límite
+        binding.etLimiteTotal.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                actualizarDistribucion()
+            }
         }
     }
 
-    private fun actualizarMontoInicial() {
-        binding.etLimiteTotal.setText("$1,200.00")    }
+    private fun seleccionarPeriodo(periodo: String) {
+        periodoSeleccionado = periodo
 
-    private fun calcularDistribucion() {
-        // Lógica para calcular distribución basada en categorías seleccionadas
-        binding.tvDistribucion.text = "$1,000 / $1,200"
-        binding.tvRestante.text = "$200"
+        // Actualizar UI de los botones
+        val buttonPrimary = getColor(R.color.purple_500)
+        val buttonTransparent = android.graphics.Color.TRANSPARENT
+        val textWhite = android.graphics.Color.WHITE
+        val textPurple = getColor(R.color.purple_500)
+
+        when (periodo) {
+            "MENSUAL" -> {
+                binding.btnMensualPeriodo.setBackgroundColor(buttonPrimary)
+                binding.btnMensualPeriodo.setTextColor(textWhite)
+                binding.btnSemanal.setBackgroundColor(buttonTransparent)
+                binding.btnSemanal.setTextColor(textPurple)
+                binding.btnAnual.setBackgroundColor(buttonTransparent)
+                binding.btnAnual.setTextColor(textPurple)
+            }
+            "SEMANAL" -> {
+                binding.btnMensualPeriodo.setBackgroundColor(buttonTransparent)
+                binding.btnMensualPeriodo.setTextColor(textPurple)
+                binding.btnSemanal.setBackgroundColor(buttonPrimary)
+                binding.btnSemanal.setTextColor(textWhite)
+                binding.btnAnual.setBackgroundColor(buttonTransparent)
+                binding.btnAnual.setTextColor(textPurple)
+            }
+            "ANUAL" -> {
+                binding.btnMensualPeriodo.setBackgroundColor(buttonTransparent)
+                binding.btnMensualPeriodo.setTextColor(textPurple)
+                binding.btnSemanal.setBackgroundColor(buttonTransparent)
+                binding.btnSemanal.setTextColor(textPurple)
+                binding.btnAnual.setBackgroundColor(buttonPrimary)
+                binding.btnAnual.setTextColor(textWhite)
+            }
+        }
+    }
+
+    private fun actualizarDistribucion() {
+        val limiteStr = binding.etLimiteTotal.text.toString().trim()
+        val limiteTotal = limiteStr.replace(",", "").replace("$", "").toDoubleOrNull() ?: 0.0
+
+        if (categoriasSeleccionadas.isEmpty() || limiteTotal == 0.0) {
+            binding.tvDistribucion.text = "$0.00 / $0.00"
+            binding.tvRestante.text = "Restante $0.00"
+            return
+        }
+
+        // Por ahora, simplemente mostramos el total
+        // Puedes implementar lógica de distribución por categoría aquí
+        val distribuido = 0.0
+        val restante = limiteTotal - distribuido
+
+        binding.tvDistribucion.text = String.format("$%.2f / $%.2f", distribuido, limiteTotal)
+        binding.tvRestante.text = String.format("Restante $%.2f", restante)
     }
 
     private fun guardarPresupuesto() {
         val limiteStr = binding.etLimiteTotal.text.toString().trim()
 
-        // Obtener categoría seleccionada
-        val categoriaSeleccionada = when {
-            binding.chipAlimentacion.isChecked -> "Alimentación"
-            binding.chipTransporte.isChecked -> "Transporte"
-            binding.chipEntretenimiento.isChecked -> "Entretenimiento"
-            binding.chipServicios.isChecked -> "Servicios"
-            else -> ""
-        }
-
-        if (categoriaSeleccionada.isEmpty()) {
-            Toast.makeText(this, "Selecciona una categoría", Toast.LENGTH_SHORT).show()
+        // Validar categorías seleccionadas
+        if (categoriasSeleccionadas.isEmpty()) {
+            Toast.makeText(this, "Selecciona al menos una categoría", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Validar límite
         if (limiteStr.isEmpty()) {
             Toast.makeText(this, "Ingresa un límite total", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val limiteTotal = limiteStr.toDoubleOrNull() ?: 0.0
+        val limiteTotal = limiteStr.replace(",", "").replace("$", "").toDoubleOrNull()
+        if (limiteTotal == null || limiteTotal <= 0) {
+            Toast.makeText(this, "Ingresa un límite válido mayor a 0", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        val nuevoPresupuesto = Presupuesto(
-            categoria = categoriaSeleccionada,
-            limiteTotal = limiteTotal,
-            periodo = "MENSUAL",
-            fechaInicio = fechaInicioMillis
-        )
-
+        // Crear un presupuesto por cada categoría seleccionada
         lifecycleScope.launch {
             try {
-                database.presupuestoDao().insertar(nuevoPresupuesto)
-                Toast.makeText(this@NuevoPresupuestoActivity, "Presupuesto creado exitosamente", Toast.LENGTH_SHORT).show()
+                categoriasSeleccionadas.forEach { categoria ->
+                    val nuevoPresupuesto = Presupuesto(
+                        categoria = categoria,
+                        limiteTotal = limiteTotal,
+                        gastoActual = 0.0,
+                        periodo = periodoSeleccionado,
+                        fechaInicio = fechaInicioMillis
+                    )
+                    database.presupuestoDao().insertar(nuevoPresupuesto)
+                }
+
+                Toast.makeText(
+                    this@NuevoPresupuestoActivity,
+                    "Presupuesto(s) creado(s) exitosamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 finish()
             } catch (e: Exception) {
-                Toast.makeText(this@NuevoPresupuestoActivity, "Error al crear presupuesto: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@NuevoPresupuestoActivity,
+                    "Error al crear presupuesto: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

@@ -8,9 +8,12 @@ import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.daniel.loszetas.data.database.AppDatabase
+import com.daniel.loszetas.data.entities.Meta
+import com.daniel.loszetas.data.entities.Presupuesto
 import com.daniel.loszetas.data.entities.Transaccion
 import com.daniel.loszetas.databinding.DialogAgregarTransaccionBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,6 +34,14 @@ class AgregarTransaccionDialog(
     private val metodosPago = arrayOf("Tarjeta", "Efectivo", "Transferencia", "Otro")
     private val cuentasDestino = arrayOf("Cuenta principal", "Cuenta de ahorros", "Efectivo")
 
+    // Para presupuestos (gastos)
+    private var presupuestosDisponibles = listOf<Presupuesto>()
+    private var presupuestoSeleccionado: Presupuesto? = null
+
+    // Para metas (ingresos)
+    private var metasDisponibles = listOf<Meta>()
+    private var metaSeleccionada: Meta? = null
+
     fun mostrar(esGasto: Boolean = false) {
         this.esGasto = esGasto
 
@@ -42,6 +53,13 @@ class AgregarTransaccionDialog(
         configurarListeners()
         actualizarUI()
         cargarCategorias()
+
+        // Cargar presupuestos si es un gasto, o metas si es un ingreso
+        if (esGasto) {
+            cargarPresupuestos()
+        } else {
+            cargarMetas()
+        }
 
         dialog.show()
     }
@@ -79,18 +97,134 @@ class AgregarTransaccionDialog(
         }
     }
 
+    private fun cargarPresupuestos() {
+        if (context !is LifecycleOwner) return
+
+        context.lifecycleScope.launch {
+            try {
+                presupuestosDisponibles = database.presupuestoDao().obtenerTodos().first()
+
+                if (presupuestosDisponibles.isNotEmpty()) {
+                    // Mostrar el selector de presupuestos
+                    binding.layoutPresupuesto.visibility = View.VISIBLE
+                    binding.tvTituloSecundario.text = "Aplicar a presupuesto"
+
+                    val nombresPresupuestos = presupuestosDisponibles.map { presupuesto ->
+                        "${presupuesto.categoria} - $${String.format("%.2f", presupuesto.limiteTotal - presupuesto.gastoActual)} disponible"
+                    }.toTypedArray()
+
+                    val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, nombresPresupuestos)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinnerSecundario.adapter = adapter
+
+                    // Listener para guardar el presupuesto seleccionado
+                    binding.spinnerSecundario.setOnItemSelectedListener(
+                        object : android.widget.AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: android.widget.AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                presupuestoSeleccionado = presupuestosDisponibles[position]
+                            }
+
+                            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+                                presupuestoSeleccionado = null
+                            }
+                        }
+                    )
+
+                    // Checkbox para aplicar al presupuesto
+                    binding.checkboxAplicar.setOnCheckedChangeListener { _, isChecked ->
+                        binding.spinnerSecundario.isEnabled = isChecked
+                        if (!isChecked) {
+                            presupuestoSeleccionado = null
+                        } else if (presupuestosDisponibles.isNotEmpty()) {
+                            presupuestoSeleccionado = presupuestosDisponibles[binding.spinnerSecundario.selectedItemPosition]
+                        }
+                    }
+                } else {
+                    binding.layoutPresupuesto.visibility = View.GONE
+                }
+            } catch (e: Exception) {
+                binding.layoutPresupuesto.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun cargarMetas() {
+        if (context !is LifecycleOwner) return
+
+        context.lifecycleScope.launch {
+            try {
+                metasDisponibles = database.metaDao().obtenerActivas().first()
+
+                if (metasDisponibles.isNotEmpty()) {
+                    // Mostrar el selector de metas
+                    binding.layoutPresupuesto.visibility = View.VISIBLE
+                    binding.tvTituloSecundario.text = "Aplicar a meta de ahorro"
+                    binding.checkboxAplicar.text = "Aplicar a meta de ahorro"
+
+                    val nombresMetas = metasDisponibles.map { meta ->
+                        val progreso = (meta.montoActual / meta.montoObjetivo * 100).toInt()
+                        "${meta.nombre} - $${String.format("%.2f", meta.montoActual)} de $${String.format("%.2f", meta.montoObjetivo)} ($progreso%)"
+                    }.toTypedArray()
+
+                    val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, nombresMetas)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinnerSecundario.adapter = adapter
+
+                    // Listener para guardar la meta seleccionada
+                    binding.spinnerSecundario.setOnItemSelectedListener(
+                        object : android.widget.AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: android.widget.AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                metaSeleccionada = metasDisponibles[position]
+                            }
+
+                            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+                                metaSeleccionada = null
+                            }
+                        }
+                    )
+
+                    // Checkbox para aplicar a la meta
+                    binding.checkboxAplicar.setOnCheckedChangeListener { _, isChecked ->
+                        binding.spinnerSecundario.isEnabled = isChecked
+                        if (!isChecked) {
+                            metaSeleccionada = null
+                        } else if (metasDisponibles.isNotEmpty()) {
+                            metaSeleccionada = metasDisponibles[binding.spinnerSecundario.selectedItemPosition]
+                        }
+                    }
+                } else {
+                    binding.layoutPresupuesto.visibility = View.GONE
+                }
+            } catch (e: Exception) {
+                binding.layoutPresupuesto.visibility = View.GONE
+            }
+        }
+    }
+
     private fun configurarListeners() {
         with(binding) {
             btnTabGasto.setOnClickListener {
                 esGasto = true
                 actualizarUI()
                 cargarCategorias()
+                cargarPresupuestos()
             }
 
             btnTabIngreso.setOnClickListener {
                 esGasto = false
                 actualizarUI()
                 cargarCategorias()
+                cargarMetas()
             }
 
             btnFecha.setOnClickListener {
@@ -146,6 +280,8 @@ class AgregarTransaccionDialog(
     }
 
     private fun guardarTransaccion() {
+        if (context !is LifecycleOwner) return
+
         with(binding) {
             val montoStr = etMonto.text.toString()
             if (montoStr.isEmpty()) {
@@ -164,18 +300,121 @@ class AgregarTransaccionDialog(
             val metodoPago = if (esGasto) spinnerMetodoPago.selectedItem.toString() else null
             val cuentaDestino = if (!esGasto) spinnerCuentaDestino.selectedItem.toString() else null
 
-            val transaccion = Transaccion(
-                esGasto = esGasto,
-                monto = monto,
-                categoria = categoria,
-                descripcion = descripcion,
-                fecha = fechaSeleccionada.timeInMillis,
-                metodoPago = metodoPago,
-                cuentaDestino = cuentaDestino
-            )
+            // Verificar si debe aplicarse al presupuesto (para gastos)
+            val aplicarPresupuesto = esGasto && checkboxAplicar.isChecked && presupuestoSeleccionado != null
 
-            onTransaccionCreada(transaccion)
-            dialog.dismiss()
+            // Verificar si debe aplicarse a la meta (para ingresos)
+            val aplicarMeta = !esGasto && checkboxAplicar.isChecked && metaSeleccionada != null
+
+            if (aplicarPresupuesto && presupuestoSeleccionado != null) {
+                val presupuesto = presupuestoSeleccionado!!
+                val nuevoGasto = presupuesto.gastoActual + monto
+
+                if (nuevoGasto > presupuesto.limiteTotal) {
+                    Toast.makeText(
+                        context,
+                        "¡Advertencia! Este gasto excederá el presupuesto de ${presupuesto.categoria}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                // Actualizar presupuesto
+                context.lifecycleScope.launch {
+                    try {
+                        database.presupuestoDao().actualizarGasto(presupuesto.id, nuevoGasto)
+
+                        val transaccion = Transaccion(
+                            esGasto = esGasto,
+                            monto = monto,
+                            categoria = categoria,
+                            descripcion = descripcion,
+                            fecha = fechaSeleccionada.timeInMillis,
+                            metodoPago = metodoPago,
+                            cuentaDestino = cuentaDestino
+                        )
+
+                        onTransaccionCreada(transaccion)
+                        dialog.dismiss()
+
+                        Toast.makeText(
+                            context,
+                            "Gasto guardado y presupuesto actualizado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            "Error al actualizar presupuesto: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } else if (aplicarMeta && metaSeleccionada != null) {
+                val meta = metaSeleccionada!!
+                val nuevoMonto = meta.montoActual + monto
+
+                // Verificar si se completó la meta
+                val metaCompletada = nuevoMonto >= meta.montoObjetivo
+
+                // Actualizar meta
+                context.lifecycleScope.launch {
+                    try {
+                        database.metaDao().actualizarMonto(meta.id, nuevoMonto.coerceAtMost(meta.montoObjetivo))
+
+                        if (metaCompletada) {
+                            database.metaDao().marcarCompletada(meta.id)
+                        }
+
+                        val transaccion = Transaccion(
+                            esGasto = esGasto,
+                            monto = monto,
+                            categoria = categoria,
+                            descripcion = descripcion,
+                            fecha = fechaSeleccionada.timeInMillis,
+                            metodoPago = metodoPago,
+                            cuentaDestino = cuentaDestino
+                        )
+
+                        onTransaccionCreada(transaccion)
+                        dialog.dismiss()
+
+                        if (metaCompletada) {
+                            Toast.makeText(
+                                context,
+                                "¡Felicidades! Meta \"${meta.nombre}\" completada 🎉",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            val porcentaje = (nuevoMonto / meta.montoObjetivo * 100).toInt()
+                            Toast.makeText(
+                                context,
+                                "Ingreso guardado - Meta al $porcentaje%",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            "Error al actualizar meta: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } else {
+                // Guardar solo la transacción sin afectar presupuesto o meta
+                val transaccion = Transaccion(
+                    esGasto = esGasto,
+                    monto = monto,
+                    categoria = categoria,
+                    descripcion = descripcion,
+                    fecha = fechaSeleccionada.timeInMillis,
+                    metodoPago = metodoPago,
+                    cuentaDestino = cuentaDestino
+                )
+
+                onTransaccionCreada(transaccion)
+                dialog.dismiss()
+            }
         }
     }
 }

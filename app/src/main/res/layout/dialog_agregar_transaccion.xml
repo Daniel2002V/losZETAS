@@ -1,198 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/tvTitulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Agregar ingreso"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <!-- Tabs Gasto/Ingreso -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agregar ingreso"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Tabs Gasto/Ingreso -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnTabGasto"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="#F3F4F6"
+                android:text="Gasto"
+                android:textAllCaps="false"
+                android:textColor="#6B7280" />
+
+            <Button
+                android:id="@+id/btnTabIngreso"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_primary"
+                android:text="Ingreso"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <!-- Categoría -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Categoría"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/spinnerCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:minHeight="48dp"
+            android:padding="12dp" />
+
+        <!-- Monto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Monto"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etMonto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="$0"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:padding="12dp" />
+
+        <!-- Descripción -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Descripción"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="Añade un detalle"
+            android:minHeight="48dp"
+            android:padding="12dp" />
+
+        <!-- Fecha -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Fecha"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btnTabGasto"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:background="#F3F4F6"
-            android:text="Gasto"
+            android:id="@+id/btnFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:drawableStart="@android:drawable/ic_menu_my_calendar"
+            android:drawablePadding="8dp"
+            android:gravity="start|center_vertical"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:text="12/10/2025"
             android:textAllCaps="false"
-            android:textColor="#6B7280" />
+            android:textColor="@android:color/black" />
 
-        <Button
-            android:id="@+id/btnTabIngreso"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_button_primary"
-            android:text="Ingreso"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+        <!-- Método de pago (solo para gastos) -->
+        <TextView
+            android:id="@+id/tvMetodoPago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Método de pago"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/spinnerMetodoPago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:minHeight="48dp"
+            android:padding="12dp" />
+
+        <!-- Cuenta destino (solo para ingresos) -->
+        <TextView
+            android:id="@+id/tvCuentaDestino"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Cuenta destino"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spinnerCuentaDestino"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:visibility="gone" />
+
+        <!-- SECCIÓN FLEXIBLE: Aplicar a presupuesto (gastos) o meta (ingresos) -->
+        <LinearLayout
+            android:id="@+id/layoutPresupuesto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkboxAplicar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aplicar a presupuesto"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvTituloSecundario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Selecciona un presupuesto"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spinnerSecundario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edittext"
+                android:enabled="false"
+                android:minHeight="48dp"
+                android:padding="12dp" />
+
+        </LinearLayout>
+
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_outline"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textColor="#7C3AED" />
+
+            <Button
+                android:id="@+id/btnGuardar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_primary"
+                android:text="Guardar ingreso"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <!-- Categoría -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Categoría"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <Spinner
-        android:id="@+id/spinnerCategoria"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <!-- Monto -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Monto"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/etMonto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:hint="$0"
-        android:inputType="numberDecimal"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <!-- Descripción -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Descripción"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/etDescripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:hint="Añade un detalle"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <!-- Fecha -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Fecha"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/btnFecha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:drawableStart="@android:drawable/ic_menu_my_calendar"
-        android:drawablePadding="8dp"
-        android:gravity="start|center_vertical"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:text="12/10/2025"
-        android:textAllCaps="false"
-        android:textColor="@android:color/black" />
-
-    <!-- Método de pago (solo para gastos) -->
-    <TextView
-        android:id="@+id/tvMetodoPago"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Método de pago"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <Spinner
-        android:id="@+id/spinnerMetodoPago"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <!-- Cuenta destino (solo para ingresos) -->
-    <TextView
-        android:id="@+id/tvCuentaDestino"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Cuenta destino"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:visibility="gone" />
-
-    <Spinner
-        android:id="@+id/spinnerCuentaDestino"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:visibility="gone" />
-
-    <!-- Botones -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnCancelar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_button_outline"
-            android:text="Cancelar"
-            android:textAllCaps="false"
-            android:textColor="#7C3AED" />
-
-        <Button
-            android:id="@+id/btnGuardar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_button_primary"
-            android:text="Guardar ingreso"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
