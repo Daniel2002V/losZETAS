@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daniel.loszetas.data.database.AppDatabase
 import com.daniel.loszetas.data.entities.Transaccion
 import com.daniel.loszetas.databinding.ActivityPantallaPrincipalBinding
+import com.daniel.loszetas.utils.ConfiguracionApp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.*
 
 class PantallaPrincipalActivity : AppCompatActivity() {
 
@@ -22,7 +23,7 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var transaccionAdapter: TransaccionAdapter
     private val database by lazy { AppDatabase.getDatabase(this) }
-    private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
+    private var cargarDatosJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +33,12 @@ class PantallaPrincipalActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
-        val usuario = auth.currentUser
-        Toast.makeText(this, "Bienvenido ${usuario?.email}", Toast.LENGTH_SHORT).show()
 
         configurarRecyclerView()
         configurarBotones()
         configurarNavegacion()
         cargarDatos()
+        actualizarMonedaDisplay()
     }
 
     private fun configurarRecyclerView() {
@@ -52,12 +52,10 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     private fun configurarBotones() {
         with(binding) {
             btnCLP.setOnClickListener {
-                Toast.makeText(this@PantallaPrincipalActivity, "Moneda: CLP", Toast.LENGTH_SHORT).show()
+                // Abrir ajustes para cambiar moneda
+                startActivity(Intent(this@PantallaPrincipalActivity, AjustesActivity::class.java))
             }
 
-            btnAgregar.setOnClickListener {
-                mostrarDialogoAgregar()
-            }
 
             btnIngreso.setOnClickListener {
                 mostrarDialogoAgregar(esGasto = false)
@@ -71,6 +69,11 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                 navegarA(HistorialActivity::class.java)
             }
         }
+    }
+
+    private fun actualizarMonedaDisplay() {
+        val moneda = ConfiguracionApp.obtenerMoneda(this)
+        binding.btnCLP.text = moneda.codigo
     }
 
     private fun configurarNavegacion() {
@@ -101,6 +104,8 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     }
 
     private fun navegarA(destino: Class<*>) {
+        cargarDatosJob?.cancel()
+
         startActivity(Intent(this, destino))
         overridePendingTransition(0, 0)
         finish()
@@ -122,6 +127,10 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     "Transacción guardada",
                     Toast.LENGTH_SHORT
                 ).show()
+                // Recargar datos después de guardar
+                cargarDatos()
+            } catch (e: CancellationException) {
+                // No hacer nada, es normal cuando se cancela
             } catch (e: Exception) {
                 Toast.makeText(
                     this@PantallaPrincipalActivity,
@@ -133,7 +142,9 @@ class PantallaPrincipalActivity : AppCompatActivity() {
     }
 
     private fun cargarDatos() {
-        lifecycleScope.launch {
+        cargarDatosJob?.cancel()
+
+        cargarDatosJob = lifecycleScope.launch {
             try {
                 database.transaccionDao().obtenerTodas().collect { transacciones ->
                     val transaccionesRecientes = transacciones.takeLast(5)
@@ -151,12 +162,27 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                     val neto = totalIngresos - totalGastos
 
                     with(binding) {
-                        tvSaldoActual.text = currencyFormat.format(saldoActual)
-                        tvIngresos.text = currencyFormat.format(totalIngresos)
-                        tvGastos.text = currencyFormat.format(totalGastos)
-                        tvNeto.text = currencyFormat.format(neto)
+                        // Usar ConfiguracionApp para formatear moneda
+                        tvSaldoActual.text = ConfiguracionApp.formatearMoneda(
+                            this@PantallaPrincipalActivity,
+                            saldoActual
+                        )
+                        tvIngresos.text = ConfiguracionApp.formatearMoneda(
+                            this@PantallaPrincipalActivity,
+                            totalIngresos
+                        )
+                        tvGastos.text = ConfiguracionApp.formatearMoneda(
+                            this@PantallaPrincipalActivity,
+                            totalGastos
+                        )
+                        tvNeto.text = ConfiguracionApp.formatearMoneda(
+                            this@PantallaPrincipalActivity,
+                            neto
+                        )
                     }
                 }
+            } catch (e: CancellationException) {
+
             } catch (e: Exception) {
                 Toast.makeText(
                     this@PantallaPrincipalActivity,
@@ -165,5 +191,16 @@ class PantallaPrincipalActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        actualizarMonedaDisplay()
+        cargarDatos()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cargarDatosJob?.cancel()
     }
 }

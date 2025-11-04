@@ -2,26 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_inicio"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/ic_home"
         android:title="Inicio" />
 
     <item
         android:id="@+id/nav_historial"
-        android:icon="@android:drawable/ic_menu_recent_history"
+        android:icon="@drawable/ic_historial"
         android:title="Historial" />
 
     <item
         android:id="@+id/nav_estadisticas"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/ic_estadisticas"
         android:title="Estadísticas" />
 
     <item
         android:id="@+id/nav_presupuesto"
-        android:icon="@android:drawable/ic_menu_set_as"
+        android:icon="@drawable/ic_presupuesto"
         android:title="Presup./Metas" />
 
     <item
         android:id="@+id/nav_ajustes"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_ajustes"
         android:title="Ajustes" />
 </menu>

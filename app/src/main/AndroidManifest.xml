@@ -16,6 +16,9 @@
         android:theme="@style/Theme.LosZETAS"
         tools:targetApi="31">
         <activity
+            android:name=".GestionarCuentaActivity"
+            android:exported="false" />
+        <activity
             android:name=".AjustesActivity"
             android:exported="false" />
         <activity

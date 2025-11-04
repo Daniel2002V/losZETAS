@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9FAFB">
+
+    <!-- Header con título y botón volver -->
+    <LinearLayout
+        android:id="@+id/headerGestionarCuenta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btnVolver"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:tint="#7C3AED"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Gestionar cuenta"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- ScrollView con contenido -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerGestionarCuenta">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Sección Información de la cuenta -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Información de la cuenta"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Card Información -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Email -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textColor="#6B7280"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvEmailCuenta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="usuario@email.com"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- UID -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ID de Usuario"
+                            android:textColor="#6B7280"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvUidCuenta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="..."
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:fontFamily="monospace" />
+                    </LinearLayout>
+
+                    <!-- Fecha de creación -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fecha de creación"
+                            android:textColor="#6B7280"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvFechaCreacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="01/01/2024"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Sección Acciones -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Acciones"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Botón Cambiar Contraseña -->
+            <Button
+                android:id="@+id/btnCambiarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_button_outline"
+                android:text="Cambiar contraseña"
+                android:textAllCaps="false"
+                android:textColor="#7C3AED"
+                android:textSize="16sp" />
+
+            <!-- Botón Cerrar Sesión -->
+            <Button
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_button_primary"
+                android:text="Cerrar sesión"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <!-- Sección Zona de peligro -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Zona de peligro"
+                android:textColor="#DC2626"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Botón Eliminar Cuenta -->
+            <Button
+                android:id="@+id/btnEliminarCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_button_danger"
+                android:text="Eliminar cuenta"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="⚠️ Esta acción es irreversible y eliminará todos tus datos permanentemente."
+                android:textColor="#6B7280"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
